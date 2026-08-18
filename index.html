@@ -537,75 +537,303 @@ i still care about you more than i probably should.
   </div>
 </div>
 
-</div>
+<!-- Back to Envelope Button -->
+<button class="close-letter" onclick="closeLetter()">
+  ↩ back to envelope
+</button>
+
 </article>
 </div>
 
+
+<!-- MUSIC -->
+
 <div class="music" id="music" onclick="toggleMusic()">
+
   <div class="music-button" id="musicButton">▶</div>
-  <div class="music-text">ang balikat at baywang · ian quiruz</div>
-  <div class="bars"><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span></div>
+
+  <div class="music-text">
+    ang balikat at baywang · ian quiruz
+  </div>
+
+  <div class="bars">
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+  </div>
+
 </div>
 
-<!-- Put your legally obtained copy of the song beside this HTML and name it song.mp3 -->
-<audio id="song" src="angbalikatatbaywang.mp3" loop preload="auto"></audio>
+
+<!-- AUDIO -->
+
+<audio
+  id="song"
+  src="angbalikatatbaywang.mp3"
+  loop
+  preload="auto">
+</audio>
+
+
+<style>
+
+/* =========================
+   BACK TO ENVELOPE
+========================= */
+
+.close-letter{
+  display:block;
+
+  margin:32px auto 15px;
+
+  padding:9px 18px;
+
+  border:1px solid rgba(150,90,105,.28);
+
+  border-radius:30px;
+
+  background:transparent;
+
+  color:#8f5b68;
+
+  font-family:inherit;
+
+  font-size:13px;
+
+  letter-spacing:.3px;
+
+  cursor:pointer;
+
+  transition:
+    background .3s ease,
+    transform .3s ease,
+    color .3s ease;
+}
+
+.close-letter:hover{
+  background:rgba(230,180,190,.15);
+
+  transform:translateY(-2px);
+
+  color:#754653;
+}
+
+.close-letter:active{
+  transform:scale(.96);
+}
+
+</style>
+
 
 <script>
-const opening=document.getElementById("opening");
-const envelope=document.getElementById("envelope");
-const song=document.getElementById("song");
-const music=document.getElementById("music");
-const musicButton=document.getElementById("musicButton");
-const ending=document.getElementById("ending");
-const signature=document.getElementById("signature");
+
+/* =========================
+   ELEMENTS
+========================= */
+
+const opening = document.getElementById("opening");
+const envelope = document.getElementById("envelope");
+
+const song = document.getElementById("song");
+
+const music = document.getElementById("music");
+const musicButton = document.getElementById("musicButton");
+
+const ending = document.getElementById("ending");
+const signature = document.getElementById("signature");
+
+
+/* =========================
+   START MUSIC
+========================= */
 
 function startMusic(){
-  song.volume=.45;
-  song.play().then(()=>{
+
+  song.volume = 0.45;
+
+  song.play().then(() => {
+
     music.classList.add("playing");
-    musicButton.textContent="Ⅱ";
-  }).catch(()=>{
-    /* Browsers may block audio until the user taps; the music button remains available. */
+
+    musicButton.textContent = "Ⅱ";
+
+  }).catch(() => {
+
+    /*
+      Some browsers block autoplay.
+      The music button can still be tapped manually.
+    */
+
   });
+
 }
+
+
+/* =========================
+   OPEN LETTER
+========================= */
 
 function openLetter(){
+
+  /* Open the envelope animation */
+
   envelope.classList.add("open");
-  setTimeout(()=>{
+
+
+  /* After the envelope opens,
+     hide the opening screen */
+
+  setTimeout(() => {
+
     opening.classList.add("hide");
+
     startMusic();
-  },900);
+
+  }, 900);
+
 }
+
+
+/* =========================
+   CLOSE LETTER
+========================= */
+
+function closeLetter(){
+
+  /* Stop the song */
+
+  song.pause();
+
+  song.currentTime = 0;
+
+  music.classList.remove("playing");
+
+  musicButton.textContent = "▶";
+
+
+  /* Show the envelope again */
+
+  opening.classList.remove("hide");
+
+
+  /* Reset the envelope
+     so it can be opened again */
+
+  setTimeout(() => {
+
+    envelope.classList.remove("open");
+
+  }, 100);
+
+}
+
+
+/* =========================
+   MUSIC TOGGLE
+========================= */
 
 function toggleMusic(){
+
+  /*
+    Prevent the music button
+    from doing anything weird
+    when the song is already playing.
+  */
+
   if(song.paused){
-    song.play().then(()=>{
+
+    song.play().then(() => {
+
       music.classList.add("playing");
-      musicButton.textContent="Ⅱ";
-    }).catch(()=>{});
+
+      musicButton.textContent = "Ⅱ";
+
+    }).catch(() => {});
+
   }else{
+
     song.pause();
+
     music.classList.remove("playing");
-    musicButton.textContent="▶";
+
+    musicButton.textContent = "▶";
+
   }
+
 }
 
-const observer=new IntersectionObserver(entries=>{
-  entries.forEach(entry=>{
-    if(entry.isIntersecting) entry.target.classList.add("visible");
-  });
-},{threshold:.12});
 
-document.querySelectorAll(".reveal").forEach(el=>observer.observe(el));
+/* =========================
+   REVEAL ANIMATIONS
+========================= */
+
+const observer = new IntersectionObserver(
+
+  entries => {
+
+    entries.forEach(entry => {
+
+      if(entry.isIntersecting){
+
+        entry.target.classList.add("visible");
+
+      }
+
+    });
+
+  },
+
+  {
+    threshold:0.12
+  }
+
+);
+
+
+document
+  .querySelectorAll(".reveal")
+  .forEach(el => {
+
+    observer.observe(el);
+
+  });
+
+
 observer.observe(ending);
 
-const sigObserver=new IntersectionObserver(entries=>{
-  entries.forEach(entry=>{
-    if(entry.isIntersecting) signature.classList.add("visible");
-  });
-},{threshold:.3});
+
+/* =========================
+   SIGNATURE ANIMATION
+========================= */
+
+const sigObserver = new IntersectionObserver(
+
+  entries => {
+
+    entries.forEach(entry => {
+
+      if(entry.isIntersecting){
+
+        signature.classList.add("visible");
+
+      }
+
+    });
+
+  },
+
+  {
+    threshold:0.3
+  }
+
+);
+
+
 sigObserver.observe(signature);
+
 </script>
+
 
 </body>
 </html>
